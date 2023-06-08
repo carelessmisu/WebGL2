@@ -1,15 +1,17 @@
-'use strict';
+"use strict";
 
-// Program constructor that takes a WebGL context and script tag IDs
-// to extract vertex and fragment shader source code from the page
+/*
+ * WebGLコンテキストとページから頂点シェーダーと
+ * フラグメントシェーダーのソースコード取り出すための
+ * scriptタグのIDを受け取るプログラムのコンストラクタ
+ */
 class Program {
-
   constructor(gl, vertexShaderId, fragmentShaderId) {
     this.gl = gl;
     this.program = gl.createProgram();
 
     if (!(vertexShaderId && fragmentShaderId)) {
-      return console.error('No shader IDs were provided');
+      return console.error("No shader IDs were provided");
     }
 
     gl.attachShader(this.program, utils.getShader(gl, vertexShaderId));
@@ -17,41 +19,40 @@ class Program {
     gl.linkProgram(this.program);
 
     if (!this.gl.getProgramParameter(this.program, this.gl.LINK_STATUS)) {
-      return console.error('Could not initialize shaders.');
+      return console.error("Could not initialize shaders.");
     }
 
     this.useProgram();
   }
 
-  // Sets the WebGL context to use current program
+  // 現在のプログラムで使用するためのWebGLコンテキスト
   useProgram() {
     this.gl.useProgram(this.program);
   }
 
-  // Load up the given attributes and uniforms from the given values
+  // 与えられた値から与えられたアトリビュートとユニフォームを読み込む
   load(attributes, uniforms) {
     this.useProgram();
     this.setAttributeLocations(attributes);
     this.setUniformLocations(uniforms);
   }
 
-  // Set references to attributes onto the program instance
+  // プログラムインスタンスにアトリビュートの参照を設定
   setAttributeLocations(attributes) {
-    attributes.forEach(attribute => {
+    attributes.forEach((attribute) => {
       this[attribute] = this.gl.getAttribLocation(this.program, attribute);
     });
   }
 
-  // Set references to uniforms onto the program instance
+  // プログラムインスタンスにユニフォームの参照を設定
   setUniformLocations(uniforms) {
-    uniforms.forEach(uniform => {
+    uniforms.forEach((uniform) => {
       this[uniform] = this.gl.getUniformLocation(this.program, uniform);
     });
   }
 
-  // Get the uniform location from the program
+  // プログラムからユニフォームのロケーションを取得
   getUniform(uniformLocation) {
     return this.gl.getUniform(this.program, uniformLocation);
   }
-
 }
